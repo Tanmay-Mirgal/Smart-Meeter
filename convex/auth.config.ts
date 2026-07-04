@@ -3,7 +3,7 @@ import { AuthConfig } from "convex/server";
 export default {
   providers: [
     {
-      domain: "https://bold-spaniel-23.clerk.accounts.dev",
+      domain: "https://clerk.tanmaymirgal.dev/v1/oauth_callback",
       applicationID: "convex",
     },
   ],
