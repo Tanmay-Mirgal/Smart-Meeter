@@ -78,11 +78,21 @@ export const syncOrganizationBillingSnapshot = mutation({
       maxMeetings: args.maxMeetings,
       features: args.features,
       syncedAt: Date.now(),
-      expiresAt: args.planKey === "pro" ? Date.now() + 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days for pro
+      expiresAt: args.planKey === "pro" ? (Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
       updatedByTokenIdentifier: identity.tokenIdentifier,
     };
 
     if (existing) {
+      // Prevent Clerk sync from downgrading an active Razorpay Pro plan
+      if (existing.planKey === "pro" && args.planKey === "starter") {
+        const isNotExpired = existing.expiresAt === undefined || existing.expiresAt > Date.now();
+        if (isNotExpired) {
+          // Keep the existing pro plan, just update the syncedAt
+          await ctx.db.patch(existing._id, { syncedAt: Date.now() });
+          return existing._id;
+        }
+      }
+
       await ctx.db.patch(existing._id, payload);
       return existing._id;
     }
