@@ -1,4 +1,4 @@
-﻿import { defineSchema, defineTable } from "convex/server";
+import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import {
   meetingParticipantStatusValidator,
@@ -60,6 +60,7 @@ export default defineSchema({
       googleCalendarSync: v.boolean(),
     }),
     syncedAt: v.number(),
+    expiresAt: v.optional(v.number()),
     updatedByTokenIdentifier: v.string(),
   }).index("by_orgId", ["orgId"]),
 

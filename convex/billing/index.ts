@@ -27,9 +27,10 @@ function resolveBillingPlan(
       recording: boolean;
       googleCalendarSync: boolean;
     };
+    expiresAt?: number;
   } | null,
 ) {
-  if (!snapshot) {
+  if (!snapshot || (snapshot.expiresAt !== undefined && snapshot.expiresAt < Date.now())) {
     return DEFAULT_STARTER_BILLING;
   }
 
@@ -77,6 +78,7 @@ export const syncOrganizationBillingSnapshot = mutation({
       maxMeetings: args.maxMeetings,
       features: args.features,
       syncedAt: Date.now(),
+      expiresAt: args.planKey === "pro" ? Date.now() + 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days for pro
       updatedByTokenIdentifier: identity.tokenIdentifier,
     };
 
@@ -113,6 +115,7 @@ export const getOrganizationPlan = query({
       meetingsLimitReached: boolean;
     };
     syncedAt: number | null;
+    expiresAt: number | null;
   }> => {
     const identity = await requireIdentity(ctx);
     await assertOrgAccess(ctx, identity.tokenIdentifier, args.orgId);
@@ -151,6 +154,7 @@ export const getOrganizationPlan = query({
         meetingsLimitReached,
       },
       syncedAt: snapshot?.syncedAt ?? null,
+      expiresAt: snapshot?.expiresAt ?? null,
     };
   },
 });
