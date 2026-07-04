@@ -21,7 +21,7 @@ const featureLabels = [
 ] as const;
 
 export function BillingPage() {
-  const { organization } = useOrganization();
+  const { organization, isLoaded: orgLoaded } = useOrganization();
   const { has } = useAuth();
   useSyncOrganizationBilling(organization?.id);
   const billing = useQuery(
@@ -29,6 +29,35 @@ export function BillingPage() {
     organization?.id ? { orgId: organization.id } : "skip",
   );
 
+  // 1. Org context still loading
+  if (!orgLoaded) {
+    return <LoadingBlock className="h-80 w-full" />;
+  }
+
+  // 2. No organization selected — show helpful guide
+  if (!organization) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl border border-border/60 bg-card/50 px-6 py-16 text-center space-y-4">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/20">
+          <AlertTriangle className="h-6 w-6 text-amber-400" />
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">No organization selected</h2>
+          <p className="mt-1 text-sm text-muted-foreground max-w-sm mx-auto">
+            Billing is managed at the organization level. Please select or create an organization from the sidebar to view and manage your plan.
+          </p>
+        </div>
+        <Button asChild variant="outline" className="gap-2">
+          <Link href="/dashboard">
+            Go to Dashboard
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+
+  // 3. Billing data still fetching
   if (billing === undefined) {
     return <LoadingBlock className="h-80 w-full" />;
   }
@@ -248,7 +277,7 @@ export function BillingPage() {
             </p>
           </CardHeader>
           <CardContent>
-            <PricingTable for="organization" />
+            <PricingTableSection />
           </CardContent>
         </Card>
       ) : (
@@ -261,6 +290,39 @@ export function BillingPage() {
           </CardContent>
         </Card>
       )}
+    </div>
+  );
+}
+
+/**
+ * Isolated wrapper so that if PricingTable fails or renders empty
+ * (e.g. Clerk Billing plans not published yet), we show a helpful fallback.
+ */
+function PricingTableSection() {
+  return (
+    <div className="relative min-h-[200px]">
+      {/* Shimmer placeholder shown behind PricingTable while it loads */}
+      <div className="absolute inset-0 flex flex-col gap-4 pointer-events-none" aria-hidden>
+        <div className="h-48 w-full rounded-xl bg-muted/30 animate-pulse" />
+      </div>
+
+      {/* Clerk PricingTable — renders on top once loaded */}
+      <div className="relative">
+        <PricingTable for="organization" />
+      </div>
+
+      {/* Info note for devs */}
+      <p className="mt-4 text-xs text-muted-foreground/50 text-center">
+        Powered by Clerk Billing · Plans are configured in your{" "}
+        <a
+          href="https://dashboard.clerk.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-2 hover:text-muted-foreground transition-colors"
+        >
+          Clerk Dashboard
+        </a>
+      </p>
     </div>
   );
 }
