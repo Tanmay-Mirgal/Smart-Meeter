@@ -1,0 +1,27 @@
+{
+  "name": "Smart Meet",
+  "short_name": "Smart Meet",
+  "description": "AI-powered meeting intelligence — real-time transcription, summaries, and team collaboration.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0b14",
+  "theme_color": "#0a0b14",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "business", "utilities"],
+  "lang": "en",
+  "dir": "ltr"
+}

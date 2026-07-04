@@ -1,10 +1,12 @@
 import { SignUp } from "@clerk/nextjs";
 import { createMetadata } from "@/lib/metadata";
 
-export const metadata = createMetadata(
-  "Sign Up",
-  "Create your Meeting Bot account and launch your workspace.",
-);
+export const metadata = createMetadata({
+  title: "Sign Up",
+  description: "Create your Smart Meet account and launch your AI-powered meeting workspace. Free to start.",
+  path: "/sign-up",
+  index: true,
+});
 
 export default function SignUpPage() {
   return (

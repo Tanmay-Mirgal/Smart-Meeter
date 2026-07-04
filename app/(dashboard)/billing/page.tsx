@@ -1,10 +1,12 @@
 import { BillingPage } from "@/features/billing/components/billing-page";
 import { createMetadata } from "@/lib/metadata";
 
-export const metadata = createMetadata(
-  "Billing",
-  "Manage workspace billing, plan limits, and premium collaboration features.",
-);
+export const metadata = createMetadata({
+  title: "Billing",
+  description: "Manage your Smart Meet workspace billing, plan limits, and premium collaboration features.",
+  path: "/billing",
+  index: false,
+});
 
 export default function BillingRoute() {
   return <BillingPage />;

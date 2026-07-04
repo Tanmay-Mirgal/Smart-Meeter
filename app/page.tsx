@@ -5,12 +5,20 @@ import { Features } from "@/components/home/features";
 import { Footer } from "@/components/home/footer";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { createMetadata } from "@/lib/metadata";
+import { createMetadata, websiteJsonLd, softwareAppJsonLd } from "@/lib/metadata";
 
-export const metadata = createMetadata(
-  "Home",
-  "AI-powered meeting intelligence — real-time transcription, summaries, and team collaboration in one workspace.",
-);
+export const metadata = createMetadata({
+  title: "Smart Meet — AI-Powered Meeting Intelligence",
+  description:
+    "Real-time transcription, AI summaries, action items, and team collaboration — all in one workspace. Start your first meeting free, no credit card needed.",
+  path: "/",
+  keywords: [
+    "free meeting transcription",
+    "AI meeting notes",
+    "meeting recorder online",
+    "meeting summary generator",
+  ],
+});
 
 export default async function HomePage() {
   const { userId } = await auth();
