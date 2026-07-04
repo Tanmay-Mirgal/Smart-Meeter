@@ -1,7 +1,8 @@
 "use client";
 
+import { useCallback } from "react";
 import Link from "next/link";
-import { PricingTable, useAuth, useOrganization } from "@clerk/nextjs";
+import { useAuth, useOrganization, useUser } from "@clerk/nextjs";
 import { AlertTriangle, ArrowRight, CalendarRange, CheckCircle2, CreditCard, Lock, Sparkles } from "lucide-react";
 import { useQuery } from "convex/react";
 import { LoadingBlock } from "@/components/shared/loading-block";
@@ -11,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { billingService } from "@/features/billing/services/billing-service";
 import { useSyncOrganizationBilling } from "@/features/billing/hooks/use-sync-organization-billing";
+import { PricingCards } from "@/features/billing/components/pricing-cards";
 
 const featureLabels = [
   { key: "unlimitedMeetings", label: "Unlimited meetings" },
@@ -23,11 +25,23 @@ const featureLabels = [
 export function BillingPage() {
   const { organization, isLoaded: orgLoaded } = useOrganization();
   const { has } = useAuth();
+  const { user } = useUser();
   useSyncOrganizationBilling(organization?.id);
   const billing = useQuery(
     billingService.getOrganizationPlan,
     organization?.id ? { orgId: organization.id } : "skip",
   );
+
+  // Called after successful Razorpay payment — triggers billing re-sync
+  const handleUpgradeSuccess = useCallback(() => {
+    if (organization?.id) {
+      void fetch("/api/billing/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orgId: organization.id }),
+      });
+    }
+  }, [organization?.id]);
 
   // 1. Org context still loading
   if (!orgLoaded) {
@@ -266,63 +280,34 @@ export function BillingPage() {
         </div>
       </div>
 
-      {canManageBilling ? (
-        <Card className="border-border/60 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-base font-semibold">
-              Upgrade Workspace
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Billing changes here apply to the active organization only.
-            </p>
-          </CardHeader>
-          <CardContent>
-            <PricingTableSection />
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="border-border/60 shadow-sm">
-          <CardContent className="flex items-start gap-3 px-6 py-5 text-sm text-muted-foreground">
-            <Lock className="mt-0.5 h-4 w-4 shrink-0" />
-            <p>
-              You can view the current plan, but only billing admins can update pricing and subscriptions for this workspace.
-            </p>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-}
-
-/**
- * Isolated wrapper so that if PricingTable fails or renders empty
- * (e.g. Clerk Billing plans not published yet), we show a helpful fallback.
- */
-function PricingTableSection() {
-  return (
-    <div className="relative min-h-[200px]">
-      {/* Shimmer placeholder shown behind PricingTable while it loads */}
-      <div className="absolute inset-0 flex flex-col gap-4 pointer-events-none" aria-hidden>
-        <div className="h-48 w-full rounded-xl bg-muted/30 animate-pulse" />
-      </div>
-
-      {/* Clerk PricingTable — renders on top once loaded */}
-      <div className="relative">
-        <PricingTable for="organization" />
-      </div>
-
-      {/* Info note for devs */}
-      <p className="mt-4 text-xs text-muted-foreground/50 text-center">
-        Powered by Clerk Billing · Plans are configured in your{" "}
-        <a
-          href="https://dashboard.clerk.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline underline-offset-2 hover:text-muted-foreground transition-colors"
-        >
-          Clerk Dashboard
-        </a>
-      </p>
+      <Card className="border-border/60 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-base font-semibold">
+            {canManageBilling ? "Choose your plan" : "Workspace Plans"}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            {canManageBilling
+              ? "Upgrade to Pro to unlock unlimited meetings and all AI features."
+              : "Only billing admins can upgrade. Contact your workspace admin."}
+          </p>
+        </CardHeader>
+        <CardContent>
+          {canManageBilling ? (
+            <PricingCards
+              orgId={organization.id}
+              currentPlanKey={billing.planKey}
+              onUpgradeSuccess={handleUpgradeSuccess}
+              userName={user?.fullName ?? undefined}
+              userEmail={user?.primaryEmailAddress?.emailAddress ?? undefined}
+            />
+          ) : (
+            <div className="flex items-start gap-3 rounded-xl border border-border/60 bg-card/50 px-5 py-4 text-sm text-muted-foreground">
+              <Lock className="mt-0.5 h-4 w-4 shrink-0" />
+              <p>You can view the current plan, but only billing admins can update pricing and subscriptions for this workspace.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
