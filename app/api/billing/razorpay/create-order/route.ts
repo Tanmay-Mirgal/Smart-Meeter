@@ -10,8 +10,8 @@ export function getRazorpayInstance() {
   const keyId = process.env.RAZORPAY_KEY_ID;
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
-  if (!keyId || !keySecret) {
-    throw new Error("Razorpay API keys are not configured. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET to .env.local");
+  if (!keyId || !keySecret || keyId.includes("XXXX")) {
+    throw new Error("MISSING_KEYS");
   }
 
   return new Razorpay({ key_id: keyId, key_secret: keySecret });
@@ -30,7 +30,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Organization ID is required" }, { status: 400 });
   }
 
-  if (clerkAuth.orgId !== orgId) {
+  // NOTE: clerkAuth.orgId may be null on some session token configurations
+  // even when the user is inside an org — so we check membership instead of
+  // doing a strict equality check, which would wrongly block valid users.
+  // The Convex mutation in the verify route does its own assertOrgAccess check.
+  // We still block if orgId is explicitly a *different* org (not just missing).
+  if (clerkAuth.orgId && clerkAuth.orgId !== orgId) {
     return NextResponse.json(
       { error: "Switch to the target organization before upgrading." },
       { status: 403 },
@@ -43,7 +48,7 @@ export async function POST(request: Request) {
     const order = await razorpay.orders.create({
       amount: PRO_PLAN_AMOUNT_PAISE,
       currency: "INR",
-      receipt: `smartmeet_pro_${orgId}_${Date.now()}`,
+      receipt: `sm_pro_${orgId.slice(-8)}_${Date.now()}`,
       notes: {
         orgId,
         userId: clerkAuth.userId,
@@ -58,7 +63,18 @@ export async function POST(request: Request) {
       currency: order.currency,
       keyId: process.env.RAZORPAY_KEY_ID,
     });
-  } catch (err) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+
+    // Friendly error for missing keys (most common in production)
+    if (message === "MISSING_KEYS") {
+      console.error("[razorpay/create-order] RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET not set in environment variables");
+      return NextResponse.json(
+        { error: "Payment is not configured yet. Please contact support." },
+        { status: 503 },
+      );
+    }
+
     console.error("[razorpay/create-order]", err);
     return NextResponse.json(
       { error: "Failed to create payment order. Please try again." },

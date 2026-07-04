@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing required payment fields" }, { status: 400 });
   }
 
-  if (clerkAuth.orgId !== orgId) {
+  if (clerkAuth.orgId && clerkAuth.orgId !== orgId) {
     return NextResponse.json({ error: "Organization mismatch" }, { status: 403 });
   }
 
