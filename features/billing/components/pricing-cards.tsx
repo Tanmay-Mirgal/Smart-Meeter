@@ -85,7 +85,7 @@ export function PricingCards({
   const [isLoading, setIsLoading] = useState(false);
   const isPro = currentPlanKey === "pro" || currentPlanKey === "custom";
 
-  const handleUpgrade = useCallback(async () => {
+  const handleUpgrade = useCallback(async (couponCode?: string) => {
     setIsLoading(true);
 
     try {
@@ -101,7 +101,7 @@ export function PricingCards({
       const orderRes = await fetch("/api/billing/razorpay/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orgId }),
+        body: JSON.stringify({ orgId, couponCode }),
       });
       const orderData = await orderRes.json() as {
         orderId?: string;
@@ -263,23 +263,34 @@ export function PricingCards({
             You&apos;re on Pro — all features unlocked!
           </div>
         ) : (
-          <Button
-            className="relative w-full gap-2 h-11 text-sm font-semibold rounded-xl bg-primary text-primary-foreground shadow-[0_1px_2px_0_rgb(0_0_0/0.3),0_4px_16px_-4px] shadow-primary/25 hover:shadow-[0_4px_24px_-4px] hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
-            onClick={handleUpgrade}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <span className="h-4 w-4 rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground animate-spin" />
-                Processing…
-              </>
-            ) : (
-              <>
-                <Lock className="h-4 w-4" />
-                Upgrade to Pro — ₹849/mo
-              </>
-            )}
-          </Button>
+          <div className="space-y-3 mt-auto">
+            <input
+              type="text"
+              placeholder="Coupon Code"
+              className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              id="coupon-code-input"
+            />
+            <Button
+              className="relative w-full gap-2 h-11 text-sm font-semibold rounded-xl bg-primary text-primary-foreground shadow-[0_1px_2px_0_rgb(0_0_0/0.3),0_4px_16px_-4px] shadow-primary/25 hover:shadow-[0_4px_24px_-4px] hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
+              onClick={() => {
+                const couponCode = (document.getElementById('coupon-code-input') as HTMLInputElement)?.value;
+                handleUpgrade(couponCode);
+              }}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <span className="h-4 w-4 rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground animate-spin" />
+                  Processing…
+                </>
+              ) : (
+                <>
+                  <Lock className="h-4 w-4" />
+                  Upgrade to Pro — ₹849/mo
+                </>
+              )}
+            </Button>
+          </div>
         )}
 
         <p className="relative mt-2.5 text-center text-[11px] text-muted-foreground/50">

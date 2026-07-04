@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthenticated" }, { status: 401 });
   }
 
-  const payload = (await request.json().catch(() => null)) as { orgId?: string } | null;
+  const payload = (await request.json().catch(() => null)) as { orgId?: string, couponCode?: string } | null;
   const orgId = payload?.orgId?.trim();
 
   if (!orgId) {
@@ -45,8 +45,14 @@ export async function POST(request: Request) {
   try {
     const razorpay = getRazorpayInstance();
 
+    // Check for secret coupon code
+    let amount = PRO_PLAN_AMOUNT_PAISE;
+    if (payload?.couponCode === "TANMAY1010") {
+      amount = 900; // ~ $0.11
+    }
+
     const order = await razorpay.orders.create({
-      amount: PRO_PLAN_AMOUNT_PAISE,
+      amount: amount,
       currency: "INR",
       receipt: `sm_pro_${orgId.slice(-8)}_${Date.now()}`,
       notes: {
