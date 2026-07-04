@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
-  Bot,
   BrainCircuit,
   CheckCircle2,
   Radio,
@@ -68,10 +68,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {/* ── Top: Logo ── */}
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
-              <Bot className="h-5 w-5" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 overflow-hidden transition-colors group-hover:bg-primary/15">
+              <Image src="/logo.png" alt="Smart Meet Logo" width={36} height={36} className="object-contain" />
             </div>
-            <span className="text-lg font-bold tracking-tight text-foreground">Meeting Bot</span>
+            <span className="text-lg font-bold tracking-tight text-foreground">Smart Meet</span>
           </Link>
         </div>
 
@@ -131,10 +131,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="flex flex-1 flex-col items-center justify-center bg-background p-6 lg:p-10">
         {/* Mobile logo */}
         <Link href="/" className="mb-8 inline-flex items-center gap-2 lg:hidden">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Bot className="h-4 w-4" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 overflow-hidden">
+            <Image src="/logo.png" alt="Smart Meet Logo" width={32} height={32} className="object-contain" />
           </div>
-          <span className="font-bold text-foreground">Meeting Bot</span>
+          <span className="font-bold text-foreground">Smart Meet</span>
         </Link>
 
         <div className="w-full max-w-sm">

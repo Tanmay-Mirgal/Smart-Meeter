@@ -22,19 +22,23 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Meeting Bot",
-    default: "Meeting Bot",
+    template: "%s | Smart Meet",
+    default: "Smart Meet",
   },
   description: "Production-grade realtime meeting workspace powered by Next.js, Convex, and Clerk.",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
   openGraph: {
-    title: "Meeting Bot",
+    title: "Smart Meet",
     description: "Production-grade realtime meeting workspace powered by Next.js, Convex, and Clerk.",
-    siteName: "Meeting Bot",
+    siteName: "Smart Meet",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Meeting Bot",
+    title: "Smart Meet",
     description: "Production-grade realtime meeting workspace powered by Next.js, Convex, and Clerk.",
   },
 };

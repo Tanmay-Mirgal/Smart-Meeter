@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { Bot, Github, ShieldCheck, Twitter } from "lucide-react";
+import Image from "next/image";
+import { Github, ShieldCheck, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Footer() {
@@ -17,8 +18,8 @@ export function Footer() {
           </div>
 
           <div className="relative">
-            <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/[0.08]">
-              <Bot className="h-6 w-6 text-primary" />
+            <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/[0.08] overflow-hidden">
+              <Image src="/logo.png" alt="Smart Meet Logo" width={48} height={48} className="object-contain" />
             </div>
             <h2 className="text-3xl md:text-[2.5rem] font-extrabold tracking-[-0.03em] text-foreground mb-4 leading-[1.15]">
               Start your first meeting
@@ -57,10 +58,10 @@ export function Footer() {
             {/* Brand */}
             <div className="col-span-1">
               <Link href="/" className="flex items-center gap-2.5 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/[0.08] ring-1 ring-primary/15 text-primary">
-                  <Bot className="h-[18px] w-[18px]" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/[0.08] ring-1 ring-primary/15 overflow-hidden">
+                  <Image src="/logo.png" alt="Smart Meet Logo" width={32} height={32} className="object-contain" />
                 </div>
-                <span className="text-[15px] font-semibold tracking-[-0.01em] text-foreground">Meeting Bot</span>
+                <span className="text-[15px] font-semibold tracking-[-0.01em] text-foreground">Smart Meet</span>
               </Link>
               <p className="text-[13px] text-muted-foreground/45 leading-relaxed max-w-[220px]">
                 AI-powered meeting intelligence for modern teams.
@@ -115,7 +116,7 @@ export function Footer() {
           {/* Bottom bar */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-t border-white/[0.04] pt-7">
             <p className="text-[11px] text-muted-foreground/30 font-medium">
-              © {new Date().getFullYear()} Meeting Bot. All rights reserved.
+              © {new Date().getFullYear()} Smart Meet. All rights reserved.
             </p>
             <div className="flex items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-primary/60" />

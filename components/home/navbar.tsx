@@ -2,8 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Bot } from "lucide-react";
 
 export function Navbar() {
   return (
@@ -14,11 +14,11 @@ export function Navbar() {
         <div className="mx-auto max-w-[1200px] px-6 h-[64px] flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/20 transition-all duration-300 group-hover:ring-primary/40 group-hover:shadow-[0_0_12px_-2px] group-hover:shadow-primary/20">
-              <Bot className="h-[18px] w-[18px] text-primary transition-transform duration-300 group-hover:scale-110" />
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-lg ring-1 ring-primary/20 transition-all duration-300 group-hover:ring-primary/40 group-hover:shadow-[0_0_12px_-2px] group-hover:shadow-primary/20 overflow-hidden">
+              <Image src="/logo.png" alt="Smart Meet Logo" width={32} height={32} className="object-contain transition-transform duration-300 group-hover:scale-110" />
             </div>
             <span className="text-[15px] font-semibold tracking-[-0.01em] text-foreground">
-              Meeting Bot
+              Smart Meet
             </span>
           </Link>
 

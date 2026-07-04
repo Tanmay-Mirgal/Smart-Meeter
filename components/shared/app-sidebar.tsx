@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   CalendarDays,
   Plug,
-  Bot,
   ChevronRight,
   CreditCard,
   FileText,
@@ -70,11 +70,11 @@ export function AppSidebar() {
         {/* Logo */}
         <div className="border-b border-border/60 px-4 py-5">
           <Link href="/dashboard" className="flex items-center gap-3 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
-              <Bot className="h-5 w-5" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 overflow-hidden transition-colors group-hover:bg-primary/15">
+              <Image src="/logo.png" alt="Smart Meet Logo" width={36} height={36} className="object-contain" />
             </div>
             <div>
-              <p className="text-sm font-bold text-foreground">Meeting Bot</p>
+              <p className="text-sm font-bold text-foreground">Smart Meet</p>
               <p className="text-[11px] text-muted-foreground">
                 Realtime workspace
               </p>
